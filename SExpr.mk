@@ -21,6 +21,23 @@ SExpr.cmxa: SExpr.cmx
 
 test: SExpr.cmo
 	$(OCAML) SExpr.cmo SExpr_test.ml
+
+tests: SExpr_test.opt SExpr_test.byte
+
+SExpr_test.opt: SExpr.cmxa SExpr_test.ml
+	$(OCAMLOPT) $^ -o $@
+
+SExpr_test.byte: SExpr.cma SExpr_test.ml
+	$(OCAMLC) $^ -o $@
+
+cleantests:
+	$(RM) \
+	  SExpr_test.byte \
+	  SExpr_test.cm[iox] \
+	  SExpr_test.o \
+	  SExpr_test.opt \
+	  #End
+
 clean:
 	$(RM) SExpr.[oa] SExpr.cm[ioxa] SExpr.cmx[as]
 
