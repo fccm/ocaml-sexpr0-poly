@@ -10,7 +10,10 @@
  including commercial applications, and to alter it and redistribute it freely.
 *)
 
-type sexpr = Atom of string | Expr of sexpr list
+type sexpr = [
+  | `Atom of string
+  | `Expr of sexpr list
+  ]
 
 type state =
   | Parse_root of sexpr list
@@ -24,7 +27,7 @@ let string_of_charlist cl =
   (s)
 
 let atom cl =
-  Atom(string_of_charlist cl)
+  `Atom(string_of_charlist cl)
 
 let parse pop_char =
   let rec aux st =
@@ -42,13 +45,13 @@ let parse pop_char =
             begin match st with
             | Parse_root sl ->
                 let this = aux(Parse_content []) in
-                aux(Parse_root((Expr this)::sl))
+                aux(Parse_root((`Expr this)::sl))
             | Parse_content sl ->
                 let this = aux(Parse_content []) in
-                aux(Parse_content((Expr this)::sl))
+                aux(Parse_content((`Expr this)::sl))
             | Parse_word(w, sl) ->
                 let this = aux(Parse_content []) in
-                aux(Parse_content((Expr this)::(atom w)::sl))
+                aux(Parse_content((`Expr this)::(atom w)::sl))
             end
         | ')' ->
             begin match st with
@@ -106,8 +109,8 @@ let parse_file filename =
 
 let print_sexpr s =
   let rec aux acc = function
-  | (Atom tag)::tl -> aux (tag::acc) tl
-  | (Expr e)::tl ->
+  | (`Atom tag)::tl -> aux (tag::acc) tl
+  | (`Expr e)::tl ->
       let s =
         "(" ^
         (String.concat " " (aux [] e))

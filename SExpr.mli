@@ -10,8 +10,11 @@
  including commercial applications, and to alter it and redistribute it freely.
 *)
 
-type sexpr = Atom of string | Expr of sexpr list
 (** the type of S-expressions *)
+type sexpr = [
+  | `Atom of string
+  | `Expr of sexpr list
+  ]
 
 val parse_string : string -> sexpr list
 (** parse from a string *)
